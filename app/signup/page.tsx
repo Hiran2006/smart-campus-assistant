@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import axios from 'axios'
 
 export default function SignupPage() {
   const [email, setEmail] = useState('')
@@ -15,6 +16,21 @@ export default function SignupPage() {
     if (password !== confirmPassword) {
       setError('Passwords do not match')
       return
+    }
+    try {
+      const response = await axios.post('/api/user/signup', {
+        name,
+        email,
+        password,
+      })
+
+      // Handle successful signup
+      if (response.data.success) {
+        // Redirect to dashboard or handle token/session
+        window.location.href = '/dashboard'
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Signup failed')
     }
   }
 

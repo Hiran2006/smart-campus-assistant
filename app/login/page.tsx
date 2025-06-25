@@ -1,16 +1,39 @@
 'use client'
 import Link from 'next/link'
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import Image from 'next/image'
+import eyeClose from '@/assets/eye-close.png'
+import eyeOpen from '@/assets/eye-open.png'
+import axios from 'axios'
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [passwordVisible, setPasswordVisible] = useState(false)
-  const router = useRouter()
+  const [email, setEmail] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
+  const [passwordVisible, setPasswordVisible] = useState<boolean>(false)
+  const [error, setError] = useState<string>('')
+  const [loading, setLoading] = useState<boolean>(false)
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    setLoading(true)
+    setError('')
+
+    try {
+      const response = await axios.post('/api/user/login', {
+        email,
+        password,
+      })
+
+      // Handle successful login
+      if (response.data.success) {
+        // Redirect to dashboard or handle token/session
+        window.location.href = '/dashboard'
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Login failed')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -20,6 +43,9 @@ export default function LoginPage() {
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Sign in to your account
           </h2>
+          {error && (
+            <div className="text-red-500 text-sm text-center mt-2">{error}</div>
+          )}
           <p className="mt-2 text-center text-sm text-gray-600">
             Or{' '}
             <Link
@@ -47,26 +73,36 @@ export default function LoginPage() {
                   required
                   className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                   placeholder="Email address"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
                 />
               </div>
               <div className="relative">
                 <label htmlFor="password" className="sr-only">
                   Password
                 </label>
-                <input
-                  id="password"
-                  name="password"
-                  type={passwordVisible ? 'text' : 'password'}
-                  autoComplete="current-password"
-                  required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                  placeholder="Password"
-                />
-                <img
-                  src={passwordVisible ? '/eye-open.svg' : '/eye-close.svg'}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
-                  onClick={() => setPasswordVisible(!passwordVisible)}
-                />
+                <div
+                  className="flex items-center appearance-none rounded-none
+                 w-fullborder border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md  focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                >
+                  <input
+                    id="password"
+                    name="password"
+                    type={passwordVisible ? 'text' : 'password'}
+                    autoComplete="current-password"
+                    required
+                    className="w-full px-3 py-2 focus:outline-none"
+                    placeholder="Password"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                  />
+                  <Image
+                    src={passwordVisible ? eyeOpen : eyeClose}
+                    alt="Eye"
+                    className="w-10 p-2"
+                    onClick={() => setPasswordVisible(!passwordVisible)}
+                  />
+                </div>
               </div>
             </div>
 
@@ -118,7 +154,10 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <button className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+          <button
+            disabled={loading}
+            className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             <svg
               className="mr-3"
               xmlns="http://www.w3.org/2000/svg"
