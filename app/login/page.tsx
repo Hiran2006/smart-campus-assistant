@@ -1,7 +1,5 @@
 'use client'
 import Link from 'next/link'
-import { provider, auth } from '@/lib/firebase'
-import { signInWithPopup, signInWithEmailAndPassword } from 'firebase/auth'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
@@ -13,12 +11,6 @@ export default function LoginPage() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    try {
-      await signInWithEmailAndPassword(auth, email, password)
-      router.push('/dashboard')
-    } catch (err) {
-      alert(err)
-    }
   }
 
   return (
@@ -126,17 +118,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <button
-            onClick={async () => {
-              try {
-                await signInWithPopup(auth, provider)
-                router.push('/dashboard')
-              } catch (err) {
-                alert(err)
-              }
-            }}
-            className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
+          <button className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
             <svg
               className="mr-3"
               xmlns="http://www.w3.org/2000/svg"

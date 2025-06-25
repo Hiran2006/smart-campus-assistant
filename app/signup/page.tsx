@@ -1,8 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import { auth } from '@/lib/firebase'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { useState } from 'react'
 
 export default function SignupPage() {
@@ -17,11 +15,6 @@ export default function SignupPage() {
     if (password !== confirmPassword) {
       setError('Passwords do not match')
       return
-    }
-    try {
-      await createUserWithEmailAndPassword(auth, email, password)
-    } catch (err) {
-      setError('Error creating account')
     }
   }
 
