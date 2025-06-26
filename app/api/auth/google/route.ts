@@ -1,5 +1,4 @@
 import { getAuthUrl, getToken, verifyToken } from '@/lib/googleAuth'
-import { __next_app__ } from 'next/dist/build/templates/app-page'
 import User from '@/models/User'
 import { NextResponse, NextRequest } from 'next/server'
 import jwt from 'jsonwebtoken'

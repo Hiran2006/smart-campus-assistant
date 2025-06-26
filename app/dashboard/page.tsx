@@ -63,9 +63,11 @@ export default function DashboardPage() {
             <div className="flex flex-col md:flex-row items-center gap-8">
               <div className="relative w-32 h-32 md:w-48 md:h-48">
                 {user?.picture ? (
-                  <img
+                  <Image
                     src={user?.picture}
                     alt="Profile"
+                    width={192}
+                    height={192}
                     className="w-full h-full rounded-full object-cover"
                   />
                 ) : (

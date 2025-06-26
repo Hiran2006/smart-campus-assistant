@@ -1,5 +1,5 @@
 import '@/lib/mongodb'
-import { model, Schema, Types } from 'mongoose'
+import mongoose, { Schema, Types } from 'mongoose'
 
 const userSchema = new Schema({
   _id: { type: Types.ObjectId, auto: true },
@@ -11,6 +11,4 @@ const userSchema = new Schema({
   date: { type: Date, default: Date.now },
 })
 
-const User = model('Users', userSchema)
-
-export default User
+export default mongoose.models.Users || mongoose.model('Users', userSchema)

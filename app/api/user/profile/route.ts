@@ -15,7 +15,6 @@ export async function GET(request: NextRequest) {
         process.env.JWT_SECRET || 'your-secret-key'
       )
 
-      console.log(decoded)
       // Find user by ID from token
       const user = await User.findById((decoded as JwtPayload).userId)
 
@@ -28,7 +27,7 @@ export async function GET(request: NextRequest) {
         email: user.email,
         picture: user.picture,
       })
-    } catch (jwtError) {
+    } catch {
       return NextResponse.json(
         { error: 'Invalid or expired token' },
         { status: 401 }

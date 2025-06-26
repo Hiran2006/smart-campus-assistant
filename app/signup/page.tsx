@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 
 export default function SignupPage() {
   const [email, setEmail] = useState('')
@@ -29,8 +29,12 @@ export default function SignupPage() {
         // Redirect to dashboard or handle token/session
         window.location.href = '/dashboard'
       }
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Signup failed')
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        setError(err.response?.data?.error || 'Signup failed')
+      } else {
+        setError('Signup failed')
+      }
     }
   }
 

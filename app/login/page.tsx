@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import eyeClose from '@/assets/eye-close.png'
 import eyeOpen from '@/assets/eye-open.png'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 
 export default function LoginPage() {
   const [email, setEmail] = useState<string>('')
@@ -29,8 +29,12 @@ export default function LoginPage() {
         // Redirect to dashboard
         window.location.href = '/dashboard'
       }
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Login failed')
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        setError(err.response?.data?.error || 'Login failed')
+      } else {
+        setError('Login failed')
+      }
     } finally {
       setLoading(false)
     }
