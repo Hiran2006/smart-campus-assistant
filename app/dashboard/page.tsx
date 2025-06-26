@@ -1,7 +1,60 @@
 'use client'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
+import Cookies from 'js-cookie'
+import defaulAvatar from '@/assets/default-avatar.jpg'
+import Image from 'next/image'
+
+interface UserProfile {
+  _id: string
+  name: string
+  email: string
+  authProvider: 'local' | 'google'
+  picture?: string
+  date: Date
+}
 
 export default function DashboardPage() {
+  const [user, setUser] = useState<UserProfile | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        // Check if we have a token cookie
+        const token = Cookies.get('token')
+        if (!token) {
+          window.location.href = '/login'
+          return
+        }
+        // Fetch profile using the token
+        const response = await axios.get('/api/user/profile', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+
+        if (response.status !== 200) {
+          if (response.status === 401) {
+            // Token expired or invalid
+            window.location.href = '/login'
+            return
+          }
+          throw new Error('Failed to fetch profile')
+        }
+
+        const data = response.data
+        setUser(data)
+      } catch (error) {
+        console.error('Error fetching profile:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchUserProfile()
+  }, [])
   return (
     <div className="min-h-screen bg-gray-50">
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -9,36 +62,40 @@ export default function DashboardPage() {
           <div className="bg-white shadow rounded-lg p-6">
             <div className="flex flex-col md:flex-row items-center gap-8">
               <div className="relative w-32 h-32 md:w-48 md:h-48">
-                <img
-                  src="/default-avatar.png"
-                  alt="Profile"
-                  className="w-full h-full rounded-full object-cover"
-                />
-                <div className="absolute bottom-0 right-0 bg-green-500 rounded-full w-6 h-6 border-2 border-white flex items-center justify-center">
-                  <span className="text-white text-xs">•</span>
-                </div>
+                {user?.picture ? (
+                  <img
+                    src={user?.picture}
+                    alt="Profile"
+                    className="w-full h-full rounded-full object-cover"
+                  />
+                ) : (
+                  <Image
+                    src={defaulAvatar}
+                    alt="Profile"
+                    className="w-full h-full rounded-full object-cover"
+                    width={192}
+                    height={192}
+                  />
+                )}
               </div>
               <div className="flex-1">
-                <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                  John Doe
-                </h1>
-                <p className="text-gray-600 mb-4">john.doe@example.com</p>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-4">
-                    <span className="text-gray-600">Class:</span>
-                    <span className="font-medium text-gray-900">
-                      B.Tech CSE
-                    </span>
+                {loading ? (
+                  <div className="animate-pulse">
+                    <div className="h-8 bg-gray-200 rounded w-32 mb-4"></div>
+                    <div className="h-4 bg-gray-200 rounded w-48"></div>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <span className="text-gray-600">Roll No:</span>
-                    <span className="font-medium text-gray-900">123456</span>
+                ) : user ? (
+                  <>
+                    <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                      {user.name}
+                    </h1>
+                    <p className="text-gray-600 mb-4">{user.email}</p>
+                  </>
+                ) : (
+                  <div className="text-red-500">
+                    Failed to load profile information
                   </div>
-                  <div className="flex items-center gap-4">
-                    <span className="text-gray-600">Batch:</span>
-                    <span className="font-medium text-gray-900">2021-2025</span>
-                  </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
