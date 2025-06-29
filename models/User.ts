@@ -8,6 +8,7 @@ const userSchema = new Schema({
   picture: { type: String },
   authProvider: { type: String, enum: ['local', 'google'], required: true },
   hashPassword: String,
+  classId: { type: String, required: true },
   date: { type: Date, default: Date.now },
 })
 

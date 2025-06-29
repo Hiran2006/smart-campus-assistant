@@ -29,20 +29,7 @@ export default function DashboardPage() {
           return
         }
         // Fetch profile using the token
-        const response = await axios.get('/api/user/profile', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-
-        if (response.status !== 200) {
-          if (response.status === 401) {
-            // Token expired or invalid
-            window.location.href = '/login'
-            return
-          }
-          throw new Error('Failed to fetch profile')
-        }
+        const response = await axios.get('/api/user/profile')
 
         const data = response.data
         setUser(data)
@@ -91,7 +78,7 @@ export default function DashboardPage() {
                     <h1 className="text-2xl font-bold text-gray-900 mb-2">
                       {user.name}
                     </h1>
-                    <p className="text-gray-600 mb-4">{user.email}</p>
+                    <p className="text-blue-600 mb-4">{user.email}</p>
                   </>
                 ) : (
                   <div className="text-red-500">

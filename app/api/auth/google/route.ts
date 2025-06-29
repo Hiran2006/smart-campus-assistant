@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
   const ticket = await verifyToken(idToken!)
   const payload = ticket.getPayload()
   const user = await User.findOne({ email: payload!.email })
-  const response = NextResponse.redirect('http://localhost:3000/dashboard')
+  const response = NextResponse.redirect(new URL('/dashboard', request.url))
   if (!user) {
     const newUser = new User({
       name: payload!.name,

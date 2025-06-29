@@ -23,12 +23,7 @@ export default function LoginPage() {
         email,
         password,
       })
-
-      // Handle successful login
-      if (response.data.success) {
-        // Redirect to dashboard
-        window.location.href = '/dashboard'
-      }
+      window.location.href = response.data.redirect
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         setError(err.response?.data?.error || 'Login failed')
