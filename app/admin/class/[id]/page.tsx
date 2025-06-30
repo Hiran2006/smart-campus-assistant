@@ -2,9 +2,21 @@
 import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
+interface ClassData {
+  name: string
+  id: string
+  teacher: string
+  students: {
+    id: string
+    name: string
+    email: string
+    picture: string
+    authProvider: string
+  }[]
+}
 export default function ClassPage() {
   const params = useParams()
-  const [classDetails, setClassDetails] = useState<any>(null)
+  const [classDetails, setClassDetails] = useState<ClassData | null>(null)
 
   useEffect(() => {
     const fetchClassDetails = async () => {
@@ -46,7 +58,7 @@ export default function ClassPage() {
         <div className="bg-gray-100 p-6 rounded-lg">
           <h2 className="text-xl font-semibold mb-4">Students</h2>
           <div className="space-y-3">
-            {classDetails.students.map((student: any) => (
+            {classDetails.students.map(student => (
               <div
                 key={student.id}
                 className="bg-white p-4 rounded-lg shadow-sm"

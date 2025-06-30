@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import User from '@/models/User'
-import { promises } from 'dns'
 
 interface ClassData {
   id: string
@@ -14,16 +13,16 @@ export async function GET(
 ) {
   try {
     const { id } = await params
-    console.log(id)
     if (!id) {
       return NextResponse.json(
         { error: 'Class ID is required' },
         { status: 400 }
       )
     }
-
     // Fetch students for the class
     const students = await User.find({ classId: id })
+
+    const classData: ClassData = { id: id, name: '', teacher: '' }
     // Format student data
     const formattedStudents = students.map(student => ({
       id: student._id.toString(),
@@ -34,6 +33,7 @@ export async function GET(
     }))
 
     return NextResponse.json({
+      classData,
       students: formattedStudents,
     })
   } catch (error) {

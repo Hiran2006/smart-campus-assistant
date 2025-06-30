@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from 'next/server'
-import { verify, JwtPayload } from 'jsonwebtoken'
+import { verify } from 'jsonwebtoken'
 import User from '@/models/User'
 export async function GET(request: NextRequest) {
   const token = request.cookies.get('token')
@@ -16,7 +16,6 @@ export async function GET(request: NextRequest) {
 
       if (decoded) {
         const classes = await User.distinct('classId')
-        console.log(classes)
         return NextResponse.json({ classes }, { status: 200 })
       }
     } catch {
