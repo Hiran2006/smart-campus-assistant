@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from 'next/server'
 import { verify } from 'jsonwebtoken'
-import User from '@/models/User'
+import { getUserClasses } from '@/models/User'
+
 export async function GET(request: NextRequest) {
   const token = request.cookies.get('token')
   try {
@@ -15,7 +16,7 @@ export async function GET(request: NextRequest) {
       )
 
       if (decoded) {
-        const classes = await User.distinct('classId')
+        const classes = await getUserClasses()
         return NextResponse.json({ classes }, { status: 200 })
       }
     } catch {
@@ -25,7 +26,7 @@ export async function GET(request: NextRequest) {
       )
     }
   } catch (error) {
-    console.error('Error fetching profile:', error)
+    console.error('Error fetching classes:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

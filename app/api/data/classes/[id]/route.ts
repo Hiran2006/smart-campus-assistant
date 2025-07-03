@@ -13,6 +13,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params
+    console.info(id)
     if (!id) {
       return NextResponse.json(
         { error: 'Class ID is required' },
